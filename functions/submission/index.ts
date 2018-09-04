@@ -1,21 +1,26 @@
-import Snoowrap = require('snoowrap');
 import {
   Context,
   HttpRequest,
-  HttpMethod
+  HttpResponse,
+  HttpStatusCode
 } from 'azure-functions-ts-essentials';
 
-import { getSubmission } from '../shared/reddit-utilities';
+import { getSubmission, parseUrl } from '../shared/reddit-utilities';
+import { handleGenericError } from '../shared/function-utilities';
 
-export function run(context: Context, req: HttpRequest) {
+export async function run(context: Context, req: HttpRequest): Promise<any> {
   try {
-    const submissionId = req.body;
-    const submission = getSubmission(submissionId);
+    let res: HttpResponse;
+    const submission = getSubmission(parseUrl(req.body));
 
-    const title = submission.title;
+    res = {
+      status: HttpStatusCode.OK,
+      body: await submission
+    };
 
-    context.done();
+    context.done(null, res);
   } catch (e) {
     context.log.error(e);
+    handleGenericError(context, '');
   }
 }
