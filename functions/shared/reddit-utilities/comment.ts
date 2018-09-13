@@ -1,13 +1,23 @@
 import Snoowrap = require('snoowrap');
 
-interface CommentData {
+export interface CommentData {
   author: string;
   body: string;
   children?: CommentData[];
 }
 
 export class Comment {
-  public static async traverse(input: Snoowrap.Listing<Snoowrap.Comment>) {
-    
+  public static async parse(
+    input: Snoowrap.Listing<Snoowrap.Comment>
+  ): Promise<CommentData[]> {
+    return await Promise.all(
+      (await input.fetchAll()).map(async (value: Snoowrap.Comment) => {
+        return {
+          author: await value.author.name,
+          body: await value.body,
+          children: await Comment.parse(await value.replies)
+        };
+      })
+    );
   }
 }
