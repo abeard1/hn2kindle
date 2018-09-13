@@ -11,9 +11,6 @@ interface SubmissionData {
 
 export class Submission {
   public static async parse(input: Snoowrap.Submission) {
-    const comments = await input.comments.fetchAll();
-    console.log(comments[0].body);
-
     return new Submission({
       title: await input.title,
       author: await input.author.name,
