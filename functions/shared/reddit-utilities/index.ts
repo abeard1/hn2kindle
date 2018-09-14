@@ -1,6 +1,6 @@
 import Snoowrap = require('snoowrap');
 
-import { Submission } from './submission';
+import { Submission, parse } from './submission';
 
 const r = new Snoowrap({
   userAgent: 'reddit2kindle by Jammie1',
@@ -18,5 +18,5 @@ export const getSubmission = async (
   submissionId: string
 ): Promise<Submission> => {
   const snoowrapSubmission = r.getSubmission(submissionId);
-  return Submission.parse(snoowrapSubmission);
+  return parse(snoowrapSubmission);
 };

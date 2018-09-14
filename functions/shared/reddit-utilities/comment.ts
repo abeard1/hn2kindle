@@ -11,11 +11,12 @@ export class Comment {
     input: Snoowrap.Listing<Snoowrap.Comment>
   ): Promise<CommentData[]> {
     return await Promise.all(
-      (await input.fetchAll()).map(async (value: Snoowrap.Comment) => {
+      (await input).map(async (value: Snoowrap.Comment) => {
+        let children: CommentData[] = await Comment.parse(await value.replies);
         return {
           author: await value.author.name,
-          body: await value.body,
-          children: await Comment.parse(await value.replies)
+          body: await value.body_html,
+          comments: children.length ? children : null
         };
       })
     );
