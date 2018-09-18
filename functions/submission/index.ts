@@ -8,20 +8,18 @@ import {
 import { getSubmission, parseUrl } from '../shared/reddit-utilities';
 import { handleGenericError } from '../shared/function-utilities';
 import { comments } from '../shared/template-utilities';
+import { sendMail } from '../shared/email-utilities';
+import { Submission } from '../shared/reddit-utilities/submission';
+import { SentMessageInfo } from 'nodemailer';
 
-export async function run(context: Context, req: HttpRequest): Promise<any> {
+export async function run(context: Context, req: HttpRequest): Promise<void> {
   try {
-    let res: HttpResponse;
-    const submission = await getSubmission(parseUrl(req.body));
-    const html = comments(submission);
+    const id: string = parseUrl(req.body);
 
-    res = {
-      status: HttpStatusCode.OK,
-      body: await html,
-      headers: { 'content-type': 'text/html' }
-    };
+    const submission: Submission = await getSubmission(id);
+    const html: string = await comments(submission);
+    await sendMail(submission, html);
 
-    context.done(null, res);
   } catch (e) {
     context.log.error(e);
     handleGenericError(context, '');

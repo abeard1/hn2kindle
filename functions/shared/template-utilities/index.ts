@@ -12,5 +12,5 @@ export async function comments(data: Submission): Promise<string> {
   const file = readFileSync(path).toString();
   handlebars.registerPartial('comment', commentPartial);
   const template = handlebars.compile(file);
-  return template(data);
+  return template(await data);
 }

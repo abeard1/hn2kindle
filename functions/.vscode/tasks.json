@@ -33,6 +33,14 @@
           "workers__node__Debug": "5858"
         }
       }
+    },
+    {
+      "type": "npm",
+      "script": "watch",
+      "problemMatcher": [
+        "$tsc-watch"
+      ],
+      "isBackground": true
     }
   ]
 }
