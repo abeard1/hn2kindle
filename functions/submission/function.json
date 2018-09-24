@@ -9,9 +9,11 @@
       "methods": ["post"]
     },
     {
-      "type": "http",
+      "name": "$return",
+      "type": "sendGrid",
       "direction": "out",
-      "name": "$return"
+      "apiKey": "SENDGRID_API_KEY",
+      "from": "convert@reddit2kindle.com"
     }
   ]
 }
