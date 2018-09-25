@@ -10,13 +10,8 @@ import { handleGenericError } from '../shared/function-utilities';
 import { comments } from '../shared/template-utilities';
 import { Submission } from '../shared/reddit-utilities/submission';
 
-export async function run(
-  context: Context,
-  req: HttpRequest,
-  message: MailJSON
-): Promise<HttpResponse> {
+export async function run(context: Context, req: HttpRequest): Promise<void> {
   try {
-    throw Error('something happened');
     const id: string = parseUrl(req.body);
 
     const submission: Submission = await getSubmission(id);
@@ -36,8 +31,8 @@ export async function run(
       content: [{ type: 'text/plain', value: ' ' }]
     };
 
-    return {
-      status: 200,
+    context.res = {
+      status: 204,
       body: undefined
     };
   } catch (e) {
