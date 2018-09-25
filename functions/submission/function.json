@@ -9,7 +9,12 @@
       "methods": ["post"]
     },
     {
+      "type": "http",
       "name": "$return",
+      "direction": "out"
+    },
+    {
+      "name": "message",
       "type": "sendGrid",
       "direction": "out",
       "apiKey": "SENDGRID_API_KEY",
