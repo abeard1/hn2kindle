@@ -6,19 +6,17 @@ export interface CommentData {
   children?: CommentData[];
 }
 
-export class Comment {
-  public static async parse(
-    input: Snoowrap.Listing<Snoowrap.Comment>
-  ): Promise<CommentData[]> {
-    return await Promise.all(
-      (await input).map(async (value: Snoowrap.Comment) => {
-        let children: CommentData[] = await Comment.parse(await value.replies);
-        return {
-          author: await value.author.name,
-          body: await value.body_html,
-          comments: children.length ? children : null
-        };
-      })
-    );
-  }
+export async function parseComment(
+  input: Snoowrap.Listing<Snoowrap.Comment>
+): Promise<CommentData[]> {
+  return await Promise.all(
+    (await input).map(async (value: Snoowrap.Comment) => {
+      let children: CommentData[] = await parseComment(await value.replies);
+      return {
+        author: await value.author.name,
+        body: await value.body_html,
+        ...(children.length ? { comments: children } : {})
+      };
+    })
+  );
 }

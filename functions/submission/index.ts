@@ -1,18 +1,17 @@
 import {
   Context,
   HttpRequest,
-  HttpResponse
 } from 'azure-functions-ts-essentials';
 import { MailJSON } from '@sendgrid/helpers/classes/mail';
 
-import { getSubmission, parseUrl } from '../shared/reddit-utilities';
+import { getSubmission, parseSubmissionUrl } from '../shared/reddit-utilities';
 import { handleGenericError } from '../shared/function-utilities';
 import { comments } from '../shared/template-utilities';
 import { Submission } from '../shared/reddit-utilities/submission';
 
 export async function run(context: Context, req: HttpRequest): Promise<void> {
   try {
-    const id: string = parseUrl(req.body);
+    const id: string = parseSubmissionUrl(req.body);
 
     const submission: Submission = await getSubmission(id);
     const html: string = await comments(submission);
@@ -37,6 +36,6 @@ export async function run(context: Context, req: HttpRequest): Promise<void> {
     };
   } catch (e) {
     context.log.error(e);
-    return handleGenericError(context, e.message);
+    handleGenericError(context, e.message);
   }
 }

@@ -3,7 +3,7 @@ import { Context, HttpResponse } from 'azure-functions-ts-essentials';
 export const handleMissingParameter = (
   context: Context,
   parameter: string
-): HttpResponse => {
+): void => {
   context.res = {
     status: 400,
     body: `Missing required parameter "${parameter}"`
