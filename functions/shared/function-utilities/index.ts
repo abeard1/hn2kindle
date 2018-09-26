@@ -1,11 +1,15 @@
-import { Context, HttpResponse } from 'azure-functions-ts-essentials';
+import {
+  Context,
+  HttpResponse,
+  HttpStatusCode
+} from 'azure-functions-ts-essentials';
 
 export const handleMissingParameter = (
   context: Context,
   parameter: string
-): void => {
-  context.res = {
-    status: 400,
+): HttpResponse => {
+  return {
+    status: HttpStatusCode.BadRequest,
     body: `Missing required parameter "${parameter}"`
   };
 };
@@ -13,13 +17,13 @@ export const handleMissingParameter = (
 export const handleGenericError = (
   context: Context,
   message: string = ''
-): void => {
+): HttpResponse => {
   if (message) {
     context.log.error(message);
   }
 
-  context.res = {
-    status: 400,
+  return {
+    status: HttpStatusCode.BadRequest,
     body: `Something went wrong. ${message}`.trim()
   };
 };

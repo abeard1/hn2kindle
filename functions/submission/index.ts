@@ -1,6 +1,8 @@
 import {
   Context,
   HttpRequest,
+  HttpStatusCode,
+  HttpResponse
 } from 'azure-functions-ts-essentials';
 import { MailJSON } from '@sendgrid/helpers/classes/mail';
 
@@ -9,7 +11,10 @@ import { handleGenericError } from '../shared/function-utilities';
 import { comments } from '../shared/template-utilities';
 import { Submission } from '../shared/reddit-utilities/submission';
 
-export async function run(context: Context, req: HttpRequest): Promise<void> {
+export async function run(
+  context: Context,
+  req: HttpRequest
+): Promise<HttpResponse> {
   try {
     const id: string = parseSubmissionUrl(req.body);
 
@@ -30,12 +35,12 @@ export async function run(context: Context, req: HttpRequest): Promise<void> {
       content: [{ type: 'text/plain', value: ' ' }]
     };
 
-    context.res = {
-      status: 204,
-      body: undefined
+    return {
+      status: HttpStatusCode.NoContent,
+      body: null
     };
   } catch (e) {
     context.log.error(e);
-    handleGenericError(context, e.message);
+    return handleGenericError(context, e.message);
   }
 }
