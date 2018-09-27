@@ -1,6 +1,6 @@
 import Snoowrap = require('snoowrap');
 import { Submission, parseSubmission } from './submission';
-import { Timespan } from 'snoowrap/dist/objects/Subreddit';
+import { Timespan, SubredditOptions, Options } from '../models/index';
 
 export interface Subreddit {
   name: string;
@@ -10,17 +10,17 @@ export interface Subreddit {
 
 export async function parseSubreddit(
   input: Snoowrap.Subreddit,
-  timespan: Timespan = 'day'
+  options: SubredditOptions
 ): Promise<Subreddit> {
   return {
     name: input.display_name,
     submissions: await Promise.all(
-      (await input.getTop({ time: timespan })).map(
+      (await input.getTop({ time: options.timespan })).map(
         async (value: Snoowrap.Submission) => {
-          return await parseSubmission(value, false);
+          return await parseSubmission(value, options);
         }
       )
     ),
-    timespan: timespan
+    timespan: options.timespan
   };
 }

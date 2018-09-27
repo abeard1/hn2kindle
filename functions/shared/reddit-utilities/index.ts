@@ -1,7 +1,8 @@
 import Snoowrap = require('snoowrap');
 
 import { Submission, parseSubmission } from './submission';
-import { Subreddit, parseSubreddit } from './subreddit';
+import { Subreddit as _Subreddit, parseSubreddit } from './subreddit';
+import { SubredditRequest, SubmissionRequest } from '../models';
 
 const r = new Snoowrap({
   userAgent: 'reddit2kindle by Jammie1',
@@ -10,24 +11,22 @@ const r = new Snoowrap({
   refreshToken: process.env.REFRESH_TOKEN
 });
 
-export const parseSubmissionUrl = (url: string): string => {
+const parseSubmissionUrl = (url: string): string => {
   const regexp = new RegExp('(?<=comments/)(.*?)(?=/)');
   return regexp.exec(url)[0];
 };
 
-export const parseSubredditUrl = (url: string): string => {
-  const regexp = new RegExp('(?<=r/)(.*?)(?=(/|$))');
-  return regexp.exec(url)[0];
-};
-
 export const getSubmission = async (
-  submissionId: string
+  request: SubmissionRequest
 ): Promise<Submission> => {
+  const submissionId = parseSubmissionUrl(request.url)
   const snoowrapSubmission = r.getSubmission(submissionId);
-  return parseSubmission(snoowrapSubmission);
+  return parseSubmission(snoowrapSubmission, request.options);
 };
 
-export const getSubreddit = async (subreddit: string): Promise<Subreddit> => {
-  const snoowrapSubmission = r.getSubreddit(subreddit);
-  return parseSubreddit(snoowrapSubmission);
+export const getSubreddit = async (
+  request: SubredditRequest
+): Promise<_Subreddit> => {
+  const snoowrapSubmission = r.getSubreddit(request.name);
+  return parseSubreddit(snoowrapSubmission, request.options);
 };

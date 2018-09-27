@@ -4,22 +4,22 @@ import {
   HttpStatusCode,
   HttpResponse
 } from 'azure-functions-ts-essentials';
-import { MailJSON } from '@sendgrid/helpers/classes/mail';
 
-import { getSubmission, parseSubmissionUrl } from '../shared/reddit-utilities';
+import { getSubmission } from '../shared/reddit-utilities';
 import { handleGenericError } from '../shared/function-utilities';
-import { comments } from '../shared/template-utilities';
+import { getSubmissionPage } from '../shared/template-utilities';
 import { Submission } from '../shared/reddit-utilities/submission';
+import { SubmissionRequest } from '../shared/models';
 
 export async function run(
   context: Context,
   req: HttpRequest
 ): Promise<HttpResponse> {
   try {
-    const id: string = parseSubmissionUrl(req.body);
+    const request: SubmissionRequest = req.body;
 
-    const submission: Submission = await getSubmission(id);
-    const html: string = await comments(submission);
+    const submission: Submission = await getSubmission(request);
+    const html: string = await getSubmissionPage(submission);
 
     context.bindings.message = {
       ...context.bindings.message,

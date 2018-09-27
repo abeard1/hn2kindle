@@ -6,20 +6,21 @@ import {
 } from 'azure-functions-ts-essentials';
 import { MailJSON } from '@sendgrid/helpers/classes/mail';
 
-import { getSubreddit, parseSubredditUrl } from '../shared/reddit-utilities';
+import { getSubreddit } from '../shared/reddit-utilities';
 import { handleGenericError } from '../shared/function-utilities';
-import { comments } from '../shared/template-utilities';
+import { getSubredditPage } from '../shared/template-utilities';
 import { Subreddit } from '../shared/reddit-utilities/subreddit';
+import { SubredditRequest } from '../shared/models';
 
 export async function run(
   context: Context,
   req: HttpRequest
 ): Promise<HttpResponse> {
   try {
-    const id: string = parseSubredditUrl(req.body);
+    const request: SubredditRequest = req.body;
 
-    const subreddit: Subreddit = await getSubreddit(id);
-    // const html: string = await comments(submission);
+    const subreddit: Subreddit = await getSubreddit(request);
+    const html: string = await getSubredditPage(subreddit);
 
     // context.bindings.message = {
     //   ...context.bindings.message,
@@ -35,7 +36,11 @@ export async function run(
     //   content: [{ type: 'text/plain', value: ' ' }]
     // };
 
-    return { status: HttpStatusCode.OK, body: subreddit };
+    return {
+      status: HttpStatusCode.OK,
+      body: html,
+      headers: { 'content-type': 'text/html' }
+    };
   } catch (e) {
     context.log.error(e);
     return handleGenericError(context, e.message);

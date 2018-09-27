@@ -1,0 +1,12 @@
+{{#each submissions}}
+<div class="container">
+  <div class="page-header">
+    <h1>{{ this.title }}</h1>
+    <span>{{ this.author }}</span>
+  </div>
+  <div class="well">
+    {{{ this.body }}}
+  </div>
+  {{>comment}}
+</div>
+{{/each}}

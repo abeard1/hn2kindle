@@ -1,21 +1,21 @@
 import Snoowrap = require('snoowrap');
 
-export interface CommentData {
+export interface Comment {
   author: string;
   body: string;
-  children?: CommentData[];
+  comments?: Comment[];
 }
 
 export async function parseComment(
   input: Snoowrap.Listing<Snoowrap.Comment>
-): Promise<CommentData[]> {
+): Promise<Comment[]> {
   return await Promise.all(
     (await input).map(async (value: Snoowrap.Comment) => {
-      let children: CommentData[] = await parseComment(await value.replies);
+      let comments: Comment[] = await parseComment(await value.replies);
       return {
         author: await value.author.name,
         body: await value.body_html,
-        ...(children.length ? { comments: children } : {})
+        ...(comments.length ? { comments: comments } : {})
       };
     })
   );
