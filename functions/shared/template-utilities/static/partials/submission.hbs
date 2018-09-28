@@ -4,9 +4,11 @@
     <h1>{{ this.title }}</h1>
     <span>{{ this.author }}</span>
   </div>
+  {{#if this.body}}
   <div class="well">
     {{{ this.body }}}
   </div>
+  {{/if}}
   {{>comment}}
 </div>
 {{/each}}

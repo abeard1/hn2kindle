@@ -9,7 +9,7 @@ export interface Comment {
 export async function parseComment(
   input: Snoowrap.Listing<Snoowrap.Comment>
 ): Promise<Comment[]> {
-  return await Promise.all(
+  return Promise.all(
     (await input).map(async (value: Snoowrap.Comment) => {
       let comments: Comment[] = await parseComment(await value.replies);
       return {

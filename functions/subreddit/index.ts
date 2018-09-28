@@ -4,7 +4,6 @@ import {
   HttpResponse,
   HttpStatusCode
 } from 'azure-functions-ts-essentials';
-import { MailJSON } from '@sendgrid/helpers/classes/mail';
 
 import { getSubreddit } from '../shared/reddit-utilities';
 import { handleGenericError } from '../shared/function-utilities';

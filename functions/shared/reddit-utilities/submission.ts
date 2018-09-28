@@ -21,7 +21,11 @@ export async function parseSubmission(
       ? await input.selftext_html
       : await getContent(await input.url),
     ...(options.comments
-      ? { comments: await parseComment(await input.comments) }
+      ? {
+          comments: await parseComment(
+            await input.comments.fetchMore({ amount: 25 })
+          )
+        }
       : {})
   };
 }

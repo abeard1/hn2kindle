@@ -16,8 +16,8 @@ export async function parseSubreddit(
     name: input.display_name,
     submissions: await Promise.all(
       (await input.getTop({ time: options.timespan })).map(
-        async (value: Snoowrap.Submission) => {
-          return await parseSubmission(value, options);
+        (value: Snoowrap.Submission) => {
+          return parseSubmission(value, options);
         }
       )
     ),

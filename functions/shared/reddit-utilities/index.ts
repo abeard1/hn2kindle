@@ -11,6 +11,10 @@ const r = new Snoowrap({
   refreshToken: process.env.REFRESH_TOKEN
 });
 
+r.config({
+  debug: true
+});
+
 const parseSubmissionUrl = (url: string): string => {
   const regexp = new RegExp('(?<=comments/)(.*?)(?=/)');
   return regexp.exec(url)[0];
@@ -19,7 +23,7 @@ const parseSubmissionUrl = (url: string): string => {
 export const getSubmission = async (
   request: SubmissionRequest
 ): Promise<Submission> => {
-  const submissionId = parseSubmissionUrl(request.url)
+  const submissionId = parseSubmissionUrl(request.url);
   const snoowrapSubmission = r.getSubmission(submissionId);
   return parseSubmission(snoowrapSubmission, request.options);
 };
