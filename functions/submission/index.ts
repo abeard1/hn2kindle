@@ -5,10 +5,9 @@ import {
   HttpResponse
 } from 'azure-functions-ts-essentials';
 
-import { getSubmission } from '../shared/reddit-utilities';
+import { Submission, getSubmission } from '../shared/reddit-utilities';
 import { handleGenericError } from '../shared/function-utilities';
 import { getSubmissionPage } from '../shared/template-utilities';
-import { Submission } from '../shared/reddit-utilities/submission';
 import { SubmissionRequest } from '../shared/models';
 
 export async function run(
@@ -23,7 +22,7 @@ export async function run(
 
     context.bindings.message = {
       ...context.bindings.message,
-      personalizations: [{ to: [{ email: 'jamie.magee@gmail.com' }] }],
+      personalizations: [{ to: [{ email: request.email }] }],
       subject: submission.title,
       attachments: [
         {

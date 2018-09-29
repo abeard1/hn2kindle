@@ -1,18 +1,17 @@
 import Snoowrap = require('snoowrap');
 
 import { Submission, parseSubmission } from './submission';
-import { Subreddit as _Subreddit, parseSubreddit } from './subreddit';
+import { Subreddit, parseSubreddit } from './subreddit';
 import { SubredditRequest, SubmissionRequest } from '../models';
+
+export { Submission } from './submission';
+export { Subreddit } from './subreddit';
 
 const r = new Snoowrap({
   userAgent: 'reddit2kindle by Jammie1',
   clientId: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
   refreshToken: process.env.REFRESH_TOKEN
-});
-
-r.config({
-  debug: true
 });
 
 const parseSubmissionUrl = (url: string): string => {
@@ -30,7 +29,7 @@ export const getSubmission = async (
 
 export const getSubreddit = async (
   request: SubredditRequest
-): Promise<_Subreddit> => {
+): Promise<Subreddit> => {
   const snoowrapSubmission = r.getSubreddit(request.name);
   return parseSubreddit(snoowrapSubmission, request.options);
 };

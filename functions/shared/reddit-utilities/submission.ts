@@ -14,16 +14,18 @@ export async function parseSubmission(
   input: Snoowrap.Submission,
   options: Options
 ): Promise<Submission> {
+  const op = await input.author.name;
   return {
     title: await input.title,
-    author: await input.author.name,
+    author: op,
     body: (await input.is_self)
       ? await input.selftext_html
       : await getContent(await input.url),
     ...(options.comments
       ? {
           comments: await parseComment(
-            await input.comments.fetchMore({ amount: 25 })
+            await input.comments.fetchMore({ amount: 25 }),
+            op
           )
         }
       : {})

@@ -134,9 +134,11 @@
             <h1>{{ title }}</h1>
             <span>{{ author }}</span>
         </div>
+        {{#if body}}
         <div class="well">
             {{{ body }}}
         </div>
+        {{/if}}
         {{>comment}}
     </div>
 </body>

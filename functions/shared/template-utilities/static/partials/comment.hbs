@@ -1,7 +1,7 @@
 {{#each comments}}
 <blockquote>
   {{{this.body}}}
-  <footer>{{this.author}}</footer>
+  <footer {{#if this.op}} class="op" {{/if}}>{{this.author}}</footer>
   {{>comment}}
 </blockquote>
 {{/each}}

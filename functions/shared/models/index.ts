@@ -2,7 +2,8 @@ export enum Timespan {
   Hour = 'hour',
   Day = 'day',
   Week = 'week',
-  Month = 'month'
+  Month = 'month',
+  All = 'all'
 }
 
 export interface Options {
@@ -12,6 +13,7 @@ export interface Options {
 
 export interface SubmissionRequest {
   url: string;
+  email: string;
   options: Options;
 }
 
