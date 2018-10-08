@@ -1,7 +1,7 @@
 import Snoowrap = require('snoowrap');
-import { getContent } from '../mercury-utilities';
+import { getContent } from '../../mercury-utilities';
 import { parseComment, Comment } from './comment';
-import { Options } from '../models';
+import { Options } from '../../models';
 
 export interface Submission {
   title: string;

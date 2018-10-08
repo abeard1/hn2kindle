@@ -1,6 +1,6 @@
 import Snoowrap = require('snoowrap');
 import { Submission, parseSubmission } from './submission';
-import { Timespan, SubredditOptions, Options } from '../models/index';
+import { Timespan, SubredditOptions } from '../../models';
 
 export interface Subreddit {
   name: string;

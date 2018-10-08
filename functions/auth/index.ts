@@ -7,12 +7,9 @@ import {
 
 import axios from 'axios';
 import { getRedditClientId, getRedditClientSecret } from '../shared/env';
-
-interface IRedditResponse {
-  error?: string;
-  code: string;
-  state: string;
-}
+import { RefreshToken, IRedditResponse } from '../shared/models';
+import { DataProvider } from '../shared/data-provider';
+import { getUser } from '../shared/reddit-utilities';
 
 export async function run(
   context: Context,
@@ -20,17 +17,27 @@ export async function run(
 ): Promise<HttpResponse> {
   const code = req.query.code;
 
-  const jsonObject = await exchangeCodeForToken(code);
+  const redditResponse: IRedditResponse = await exchangeCodeForToken(code);
+
+  const dataProvider = new DataProvider();
+  await dataProvider.init();
+
+  const username = await getUser(redditResponse.refresh_token);
+
+  dataProvider.storeUserIdForToken(redditResponse.refresh_token, username);
 
   return {
-    status: HttpStatusCode.OK,
-    body: ''
+    status: HttpStatusCode.Redirect,
+    body: '',
+    headers: {
+      location: 'https://reddit.com'
+    }
   };
 }
 
-const exchangeCodeForToken = async code => {
+const exchangeCodeForToken = async (code: string): Promise<IRedditResponse> => {
   const redditTokenUrl = 'https://www.reddit.com/api/v1/access_token';
-  return await axios.post(
+  return (await axios.post(
     redditTokenUrl,
     `grant_type=authorization_code&code=${code}&redirect_uri=http://localhost:7071/api/auth`,
     {
@@ -39,5 +46,5 @@ const exchangeCodeForToken = async code => {
         password: getRedditClientSecret()
       }
     }
-  );
+  )).data;
 };

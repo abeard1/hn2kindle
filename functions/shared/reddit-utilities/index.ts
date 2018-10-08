@@ -1,11 +1,12 @@
 import Snoowrap = require('snoowrap');
 
-import { Submission, parseSubmission } from './submission';
-import { Subreddit, parseSubreddit } from './subreddit';
-import { SubredditRequest, SubmissionRequest } from '../models';
+import { Submission, parseSubmission } from './models/submission';
+import { Subreddit, parseSubreddit } from './models/subreddit';
+import { SubredditRequest, SubmissionRequest, RefreshToken } from '../models';
+import { getRedditClientId, getRedditClientSecret } from '../env';
 
-export { Submission } from './submission';
-export { Subreddit } from './subreddit';
+export { Submission } from './models/submission';
+export { Subreddit } from './models/subreddit';
 
 const r = new Snoowrap({
   userAgent: 'reddit2kindle by Jammie1',
@@ -32,4 +33,14 @@ export const getSubreddit = async (
 ): Promise<Subreddit> => {
   const snoowrapSubmission = r.getSubreddit(request.name);
   return parseSubreddit(snoowrapSubmission, request.options);
+};
+
+export const getUser = async (refreshToken: RefreshToken): Promise<string> => {
+  const userSnoowrap = new Snoowrap({
+    userAgent: 'reddit2kindle',
+    clientId: getRedditClientId(),
+    clientSecret: getRedditClientSecret(),
+    refreshToken: refreshToken
+  });
+  return userSnoowrap.getMe().name;
 };

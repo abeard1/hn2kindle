@@ -1,8 +1,8 @@
 import handlebars from 'handlebars';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
-import { Submission } from '../reddit-utilities/submission';
-import { Subreddit } from '../reddit-utilities/subreddit';
+import { Submission } from '../reddit-utilities';
+import { Subreddit } from '../reddit-utilities';
 
 const submissionPartial = readFileSync(
   resolve(__dirname, './static/partials/submission.hbs')
