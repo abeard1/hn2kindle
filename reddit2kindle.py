@@ -25,12 +25,16 @@ def thread():
     if util.validate_request_post(request.form) is not None:
         return jsonify(type='danger', text=util.validate_request_post(request.form))
 
-    #try:
-        # hardcoded for now
-    post = util.get_item(22351659)
-   # except:
-        #return jsonify(type='danger', text='That wasn\'t an HN link, was it?')
+    # do this validation client side
+    post_id = request.form['submission']
+    if not post_id.isnumeric():
+        return jsonify(type='danger', text='That wasn\'t an HN post ID, was it?')
+    try:
+        post = util.get_item(post_id)
+    except:
+        return jsonify(type='danger', text='That wasn\'t an HN post ID, was it?')
 
+    # IMPLEMENT THIS for posts with URLs
     #if not submission.url.startswith('https://www.reddit.com/r/'):
     #   body = util.get_content(submission.url)
     #else:

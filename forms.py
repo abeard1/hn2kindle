@@ -6,7 +6,7 @@ csrf = CsrfProtect()
 
 
 class Submission(FlaskForm):
-    submission = StringField('Submission URL')
+    submission = StringField('Post ID')
     comments = BooleanField('Include comments')
     comments_style = SelectField('Comments style', choices=[('numbers', 'numbers'), ('quotes', 'quotes')])
     email = StringField('Kindle email address')
