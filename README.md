@@ -30,9 +30,9 @@ You need to add hn2kindle to your approved Kindle e-mail senders. To do this:
 
 TODO
 ============
-support both comment styles
-get content from posts with external URLs
-basic support for multiple posts (top posts from last X days)
-get real domain / email address on that domain
+- support both comment styles
+- get content from posts with external URLs
+- basic support for multiple posts (top posts from last X days)
+- get real domain / email address on that domain
 
-Maybe: ability to subscribe?
+- Maybe: ability to subscribe?
