@@ -27,3 +27,12 @@ You need to add hn2kindle to your approved Kindle e-mail senders. To do this:
 2. Go to "Your Account", select "Manage Your Content and Devices" and then select "Personal Document Settings".
 3. Under "Approved Personal Document E-mail List" click on "Add a new approved e-mail address".
 4. Add "hn2kindle@gmail.com" and select "Add Address".
+
+TODO
+============
+support both comment styles
+get content from posts with external URLs
+basic support for multiple posts (top posts from last X days)
+get real domain / email address on that domain
+
+Maybe: ability to subscribe?
