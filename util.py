@@ -116,11 +116,6 @@ def validate_request_post(values):
     return None
 
 
-
-def get_posts(subreddit, time, limit):
-    return r.subreddit(subreddit).top(time_filter=time, limit=limit)
-
-
 def get_item(item_id):
     url = 'https://hacker-news.firebaseio.com/v0/item/' + str(item_id) + '.json'
     response = requests.get(url)

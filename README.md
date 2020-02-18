@@ -17,11 +17,11 @@ Installation
         server=smtp.gmail.com
         port=587
 or create environment variables for `SMTP_USERNAME`,`SMTP_PASSWORD`, `SMTP_SERVER`, `SMTP_PORT`.
-4. Run the app `python reddit2kindle.py`
+4. Run the app `python hn2kindle.py`
 
 Usage
 =====
-You need to add reddit2kindle to your approved Kindle e-mail senders. To do this:
+You need to add hn2kindle to your approved Kindle e-mail senders. To do this:
 
 1. Visit [Manage Your Content and Devices](http://www.amazon.com/manageyourkindle) page.
 2. Go to "Your Account", select "Manage Your Content and Devices" and then select "Personal Document Settings".
