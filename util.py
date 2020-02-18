@@ -9,38 +9,53 @@ import praw
 import requests
 from markdown import markdown
 
+import json
 
-def to_html_numbers(comment, op):
-    result = markdown(comment.body) + \
-             ('<footer class="op">' if comment.author.name == op else '<footer>') + \
-             comment.author.name + '</footer>'
-    children = ['<li>' + to_html_numbers(reply, op) + '</li>' for reply in comment.replies if
-                reply.author is not None]
-    if children:
-        result += '<ol>' + ''.join(children) + '</ol>'
+
+# combine these 2 functions
+# clean up comment vs comment_id usage - doing a double GET right now
+
+def to_html_numbers(comment_id, op):
+    comment = get_item(comment_id)
+    result = markdown(comment['text']) + \
+             ('<footer class="op">' if comment['by'] == op else '<footer>') + \
+             comment['by'] + '</footer>'
+
+    if 'kids' not in comment:
+        return result
+
+    children = []
+    for reply_id in comment['kids']:
+        reply_result = '<li>' + to_html_numbers(reply_id, op) + '</li>'
+        children.append(reply_result)
+        
+
+    result += '<ol>' + ''.join(children) + '</ol>'
+
     return result
 
 
-def to_html_quotes(comment, op):
-    result = markdown(comment.body) + \
-             ('<footer class="op">' if comment.author.name == op else '<footer>') + \
-             comment.author.name + '</footer>'
-    children = ['<blockquote>' + to_html_quotes(reply, op) + '</blockquote>' for reply in
-                comment.replies if
-                reply.author is not None]
+# fix this and combine with above
+def to_html_quotes(comment_id, op):
+    result = markdown(comment['text']) + \
+             ('<footer class="op">' if comment['by'] == op else '<footer>') + \
+             comment['by'] + '</footer>'
+    children = ['<blockquote>' + to_html_numbers(reply_id, op) + '</blockquote>' for reply_id in comment['kids'] if
+                'kids' in comment]
     if children:
         result += ''.join(children)
     return result
 
 
-def get_comments(submission, comments_style, op):
+def get_comments(comment_ids, comments_style, op):
     out = '<ol>' if comments_style == 'numbers' else ''
-    for comment in submission.comments:
-        if comment.author is not None:
+    for comment_id in comment_ids:
+        comment = get_item(comment_id)
+        if comment['by'] is not None:
             if comments_style == 'numbers':
-                out += '<li>' + to_html_numbers(comment, op) + '</li>'
+                out += '<li>' + to_html_numbers(comment_id, op) + '</li>'
             else:
-                out += '<blockquote>' + to_html_quotes(comment, op) + '</blockquote>'
+                out += '<blockquote>' + to_html_quotes(comment_id, op) + '</blockquote>'
     return out + ('</ol>' if comments_style == 'numbers' else '')
 
 
@@ -67,32 +82,9 @@ def get_smtp():
         port = os.environ['SMTP_PORT']
     return server, port
 
-
-def get_mercury_token():
-    if os.path.isfile(os.path.join(os.path.dirname(__file__), 'settings.cfg')):
-        config = ConfigParser()
-        config.read(os.path.join(os.path.dirname(__file__), 'settings.cfg'))
-        token = config.get('mercury', 'token')
-    else:
-        token = os.environ['MERCURY_TOKEN']
-    return token
-
-
-def get_reddit_oauth():
-    if os.path.isfile(os.path.join(os.path.dirname(__file__), 'settings.cfg')):
-        config = ConfigParser()
-        config.read(os.path.join(os.path.dirname(__file__), 'settings.cfg'))
-        client_id = config.get('reddit', 'client_id')
-        client_secret = config.get('reddit', 'client_secret')
-    else:
-        client_id = os.environ['CLIENT_ID']
-        client_secret = os.environ['CLIENT_SECRET']
-    return client_id, client_secret
-
-
 def send_email(to, kindle_address, attachment, title):
     msg = MIMEMultipart()
-    msg['From'] = 'convert@reddit2kindle.com'
+    msg['From'] = 'hn2kindle@gmail.com'
     if kindle_address == 'free':
         msg['To'] = to + '@free.kindle.com'
     else:
@@ -107,6 +99,7 @@ def send_email(to, kindle_address, attachment, title):
 
     s = smtplib.SMTP(get_smtp()[0], get_smtp()[1])
 
+    s.starttls()
     s.login(get_auth()[0], get_auth()[1])
     s.send_message(msg)
 
@@ -144,16 +137,9 @@ def get_posts(subreddit, time, limit):
     return r.subreddit(subreddit).top(time_filter=time, limit=limit)
 
 
-def get_content(url):
-    request = requests.get(
-        'https://mercury.postlight.com/parser?url=' + url,
-        headers={'x-api-key': get_mercury_token()})
-    p = re.compile(r'<img.*?>')
-    try:
-        return p.sub('', request.json()['content'])
-    except:
-        return ''
+def get_item(item_id):
+    url = 'https://hacker-news.firebaseio.com/v0/item/' + str(item_id) + '.json'
+    response = requests.get(url)
+    return json.loads(response.text)
 
 
-r = praw.Reddit(user_agent='reddit2kindle', client_id=get_reddit_oauth()[0],
-                client_secret=get_reddit_oauth()[1])

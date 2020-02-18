@@ -5,6 +5,8 @@ from flask.templating import render_template
 
 import forms
 import util
+import requests
+import json
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -23,26 +25,26 @@ def thread():
     if util.validate_request_post(request.form) is not None:
         return jsonify(type='danger', text=util.validate_request_post(request.form))
 
-    try:
-        submission = util.r.submission(url=request.form['submission'])
-    except:
-        return jsonify(type='danger', text='That wasn\'t a reddit link, was it?')
+    #try:
+        # hardcoded for now
+    post = util.get_item(22351659)
+   # except:
+        #return jsonify(type='danger', text='That wasn\'t an HN link, was it?')
 
-    if not submission.url.startswith('https://www.reddit.com/r/'):
-        body = util.get_content(submission.url)
-    else:
-        body = util.markdown(submission.selftext, output_format='html5')
-    title = submission.title
-    author = "[deleted]"
-    if submission.author is not None:
-        author = submission.author.name
+    #if not submission.url.startswith('https://www.reddit.com/r/'):
+    #   body = util.get_content(submission.url)
+    #else:
+    body = util.markdown(post['text'], output_format='html5')
+    title = post['title']
+    author = post['by']
     address = request.form['email']
     kindle_address = request.form['kindle_address']
 
     comments = None
     if request.form['comments'] == 'true':
-        submission.comments.replace_more(limit=0)
-        comments = util.get_comments(submission, request.form['comments_style'], author)
+        #submission.comments.replace_more(limit=0)
+        # handle no comments
+        comments = util.get_comments(post['kids'], request.form['comments_style'], author)
 
     attachment = render_template('comments.html', title=title, body=body, author=author,
                                  comments=comments)
@@ -55,6 +57,7 @@ def thread():
         return jsonify(type='warning', text='Uh oh! Something went wrong on our end')
 
 
+# not working yet
 @app.route('/subreddit', methods=['POST'])
 def convert():
     if util.validate_request_subreddit(request.form) is not None:
