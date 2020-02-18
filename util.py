@@ -116,22 +116,6 @@ def validate_request_post(values):
     return None
 
 
-def validate_request_subreddit(values):
-    if values['subreddit'] is '':
-        return 'I need a subreddit name!'
-    if values['time'] not in ['all', 'year', 'month', 'week', 'day', 'hour']:
-        return 'That\'s not a valid time period, is it?'
-    try:
-        if values['limit'] is '' or 0 > int(values['limit']) or int(values['limit']) > 25:
-            return 'How many posts would you like?'
-    except ValueError:
-        return 'How many posts would you like?'
-    if values['email'] is '':
-        return 'How am I supposed to send it to you without an email address?'
-    if values['kindle_address'] not in ['free', 'normal']:
-        return 'Which kindle address do you want me to send to?'
-    return None
-
 
 def get_posts(subreddit, time, limit):
     return r.subreddit(subreddit).top(time_filter=time, limit=limit)
